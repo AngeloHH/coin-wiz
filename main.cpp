@@ -1,4 +1,3 @@
-#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -7,15 +6,11 @@ using namespace std;
 
 int main() {
     auto newWallet = wallet();
-    string currencyName, currencyPlural, tinnyCurrency;
-    cout << "To conjure your own currency, please provide the following incantations:\n";
-    cout << "The mystical name of your currency:\n";
-    cin >> currencyName;
-    cout << "The plural form of your currency (for when it multiplies):\n";
-    cin >> currencyPlural;
-    cout << "The smallest unit (the fraction that is less than one).\n";
-    cin >> tinnyCurrency;
-    newWallet.setCurrency(currencyName, currencyPlural, tinnyCurrency);
+    char currencySymbol;
+    std::cout << "To conjure your own currency, please provide the following incantations:\n";
+    std::cout << "The symbol of your currency (e.g., $):\n";
+    std::cin >> currencySymbol;
+    newWallet.setCurrency(currencySymbol);
 
     cout << "Insert a coin and enter the amount below.\n";
     cout << "If the value is less than 0 or equal, you will stop adding coins\n";
@@ -32,12 +27,11 @@ int main() {
     }
 
     const map<float, float> balance = newWallet.getBalance();
+    float target;
     cout << "cash register opened width " << cashRegister << endl;
-    float test;
-    cout << "Insert the mount that you want to retire: "; cin >> test;
-    map<float, float> appr = newWallet.apprValue(test);
-    for (const auto& par : appr) {
-        std::cout << "Clave: " << par.first << ", Valor: " << par.second << std::endl;
-    }
+    cout << "Insert the mount that you want to retire: "; cin >> target;
+    vector<float> approach = newWallet.apprValue(target);
+    for (float number : approach) cout << number << ", ";
+    cout << endl;
     return 0;
 }

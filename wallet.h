@@ -2,22 +2,21 @@
 #define WALLET_H
 
 #include <map>
-#include <string>
-#include <tuple>
+#include <vector>
 
 using namespace std;
 
 
 class wallet {
-    tuple<string, string, string> currency;
-    map<float, float> money;
+    char currency = '$';
+    vector<float> money;
 
 public:
     void insertCoin(float value, float mount);
-    void setCurrency(const string& name, const string& plural, const string& tinyUnit);
-    string getCurrency(float value);
+    void setCurrency(char symbol);
+    char getCurrency() const;
     map<float, float> getBalance();
-    map<float, float> apprValue(float target);
+    vector<float> apprValue(float target);
 };
 
 

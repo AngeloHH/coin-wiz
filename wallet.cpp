@@ -1,52 +1,48 @@
 #include "wallet.h"
 
-#include <limits>
+#include <algorithm>
+#include <iomanip>
+using namespace std;
 
-void wallet::setCurrency(const string& name, const string& plural, const string& tinyUnit) {
-    wallet::currency = make_tuple(name, plural, tinyUnit);
+void wallet::setCurrency(char currencySymbol) {
+    wallet::currency = currencySymbol;
 }
 
 void wallet::insertCoin(const float value, float mount) {
-    wallet::money.insert_or_assign(value, mount);
+    for (int x = 0; x < mount; ++x) money.push_back(value);
 }
 
 map<float, float> wallet::getBalance() {
-    return wallet::money;
+    map<float, float> result;
+    for (float i : money) result[i]++;
+    return result;
 }
 
-string wallet::getCurrency(float value) {
-    if (value == 1) return get<0>(wallet::currency);
-    if (value < 1) return get<2>(wallet::currency);
-    return get<1>(wallet::currency);
+char wallet::getCurrency() const {
+    return wallet::currency;
 }
 
-map<float, float> wallet::apprValue(float target) {
-    map<float, float> bestSubset;
-    float bestDiff = numeric_limits<float>::max(); // Initialize with maximum difference
+vector<float> wallet::apprValue(float target) {
+    size_t n = money.size();
+    vector<std::vector<bool>> dp(n + 1, vector<bool>(target + 1, false));
 
-    for (const auto& [key, value] : money) {
-        float currentDiff = std::abs(target - (key + value));
-        if (currentDiff < bestDiff) {
-            bestDiff = currentDiff;
-            bestSubset = {{key, value}}; // Update with single element if closer
+    for (int i = 1; i <= n; i++) {
+        dp[i][0] = true;
+        for (int j = 1; j <= target; j++) {
+            if (money[i - 1] > j) dp[i][j] = dp[i - 1][j];
+            else dp[i][j] = dp[i - 1][j] || dp[i - 1][j - money[i - 1]];
         }
     }
 
-    // Iterate through subsets using bit manipulation for efficiency
-    for (int i = 1; i < (1 << money.size()); ++i) {
-        float subsetSum = 0.0;
-        map<float, float> subset;
-        for (int j = 0; j < money.size(); ++j) {
-            if (i & (1 << j)) {
-                subsetSum += money.at(next(money.begin(), j)->first); // Access element efficiently
-                subset[next(money.begin(), j)->first] = money.at(next(money.begin(), j)->first);
-            }
+    vector<float> solution; int i = n, j = target;
+    while (j > 0) {
+        if (!dp[i][j]) continue;
+        if (dp[i - 1][j]) i -= 1;
+        else {
+            solution.push_back(money[i - 1]);
+            j -= money[i - 1]; i -= 1;
         }
-
-        float currentDiff = abs(target - subsetSum);
-        if (currentDiff > bestDiff) continue;
-        bestDiff = currentDiff; bestSubset = subset;
     }
 
-    return bestSubset;
+    return solution;
 }
