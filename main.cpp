@@ -1,15 +1,15 @@
+#include "wallet.h"
+
 #include <iostream>
 #include <vector>
-
-#include "wallet.h"
 using namespace std;
 
 int main() {
     auto newWallet = wallet();
     char currencySymbol;
-    std::cout << "To conjure your own currency, please provide the following incantations:\n";
-    std::cout << "The symbol of your currency (e.g., $):\n";
-    std::cin >> currencySymbol;
+    cout << "To conjure your own currency, please provide the following incantations:\n";
+    cout << "The symbol of your currency (e.g., $):\n";
+    cin >> currencySymbol;
     newWallet.setCurrency(currencySymbol);
 
     cout << "Insert a coin and enter the amount below.\n";
